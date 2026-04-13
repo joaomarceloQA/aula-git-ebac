@@ -27,8 +27,6 @@ jobs:
 
       - name: Rodar Testes Cypress
         run: npx cypress run --spec "cypress/integration/exercicio-api.spec.js"
-        name: Rodar Testes Cypress
-        run: npx cypress run --spec "cypress/integration/exercicio-api.spec.js"
 
       - name: Upload do Relatório
         if: always()
