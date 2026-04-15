@@ -9,7 +9,6 @@ on:
 jobs:
   execucao-testes:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
@@ -17,16 +16,21 @@ jobs:
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "20"
 
       - name: Instalar dependências
         run: npm install
 
-      - name: Subir ServeRest API (Background)
-        run: npx serverest@latest &
-
-      - name: Rodar Testes Cypress
-        run: npx cypress run --spec "cypress/integration/exercicio-api.spec.js"
+      - name: Subir API e Rodar Testes
+        run: |
+          npx serverest@latest --port 3000 &
+          echo "Aguardando API..."
+          until $(curl --output /dev/null --silent --head --fail http://localhost:3000); do
+            printf '.'
+            sleep 5
+          done
+          echo "API Online!"
+          npx cypress run --config baseUrl=http://localhost:3000 --spec "cypress/integration/*.spec.js"
 
       - name: Upload do Relatório
         if: always()
